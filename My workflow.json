@@ -1,0 +1,298 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "daaacf0e-5c43-4bdc-a418-f00d9078c9a4",
+              "name": "IDChat",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "446504d7-f382-44e3-875a-88b44ffc1e05",
+              "name": "Mensagem",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        64
+      ],
+      "id": "6d0d33fe-7934-4b4e-bf01-6a83166ef282",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1atcOtM3I414QNNjfZ2MJrHHzjkhthvAz6-Uqn8LsfGI",
+          "mode": "list",
+          "cachedResultName": "curso n8n gratuito",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1atcOtM3I414QNNjfZ2MJrHHzjkhthvAz6-Uqn8LsfGI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "case 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1atcOtM3I414QNNjfZ2MJrHHzjkhthvAz6-Uqn8LsfGI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "IDChat": "={{ $json.IDChat }}",
+            "Mensagem": "={{ $json.Mensagem }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "IDChat",
+              "displayName": "IDChat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        64
+      ],
+      "id": "58bbc496-b725-40e8-a510-08f787477161",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YdtCnwQBIo4jeNck",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Olá, amigo(a)! 👋\nComo está? Tranquilo(a)?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        24,
+        68
+      ],
+      "id": "bbd83216-8298-443d-893c-81864ac5a649",
+      "name": "When chat message received",
+      "webhookId": "016e028e-86db-4de2-acb1-f1aaf39dd603"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.Mensagem }}",
+        "options": {
+          "systemMessage": "Você é um assistente amigável que conversa com usuários.\n\nRegras importantes:\n\n- Entenda abreviações comuns (vc, pq, tb, msg, info, q).\n- Interprete erros de digitação.\n- Responda de forma clara e educada.\n- Se a mensagem for apenas um cumprimento, responda educadamente.\n- Sempre tente entender a intenção do usuário.\n\nExemplos:\nvc = você\npq = porque\ntb = também\nmsg = mensagem\nq = que"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        640,
+        77.07335090637207
+      ],
+      "id": "cb561395-e2f7-4499-aa38-ea3f67f47df5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        576,
+        224
+      ],
+      "id": "759ff588-8704-4ecd-a4bd-f390acd32644",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "0725OupflK7f24PB",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "=customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.IDChat }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        224
+      ],
+      "id": "e9877539-1331-4d9e-b5d6-28980ef59d15",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        992,
+        80
+      ],
+      "id": "5ee32c24-7dac-4c87-b5af-d2105a6a14aa",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        928,
+        256
+      ],
+      "id": "ca2b2b45-fadc-41f8-84f4-874098bd0692",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        800,
+        288
+      ],
+      "id": "028a9f2f-c13b-49fb-b712-6334dcc47292",
+      "name": "Wikipedia"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8e876c4c-e940-4339-a3f1-d5ced4fbadb1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "87377a71d7146fd4f6f5922b25c4c908b2affb5d81fee81330141b165de2b75a"
+  },
+  "id": "x9hy3KTa5KrGBAMq",
+  "tags": []
+}
